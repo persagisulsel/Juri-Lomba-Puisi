@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Penilaian Juri · Lomba Baca Puisi Gizi</title>
+<style>
+:root{--hijau:#1b7a4b;--hijau-tua:#125a36;--hijau-muda:#e6f3ec;--latar:#f3f6f4;--teks:#1d2a23;--abu:#6b7a72;--garis:#d9e2dc;--merah:#b3261e;--kuning:#fff4d6;--putih:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--latar);color:var(--teks);font-size:16px;line-height:1.45}
+header{background:var(--hijau);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+header h1{font-size:16px;margin:0;flex:1;font-weight:600}
+header small{display:block;font-weight:400;opacity:.85;font-size:12px}
+header button{background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:8px;padding:8px 10px;font-size:13px}
+main{max-width:760px;margin:0 auto;padding:14px}
+.kartu{background:var(--putih);border:1px solid var(--garis);border-radius:14px;padding:14px;margin-bottom:12px}
+h2{font-size:18px;margin:4px 0 10px}
+h3{font-size:15px;margin:0 0 6px}
+.kecil{font-size:13px;color:var(--abu)}
+button{font:inherit;cursor:pointer}
+.btn{display:inline-block;background:var(--hijau);color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:600;text-decoration:none;text-align:center}
+.btn.blok{display:block;width:100%}
+.btn.sekunder{background:var(--putih);color:var(--hijau-tua);border:1px solid var(--hijau)}
+.btn.bahaya{background:var(--putih);color:var(--merah);border:1px solid var(--merah)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,textarea,select{font:inherit;width:100%;padding:10px;border:1px solid var(--garis);border-radius:10px;background:#fff;color:var(--teks)}
+textarea{min-height:70px;resize:vertical}
+.baris{display:flex;gap:10px;align-items:center}
+.baris>*{flex:1}
+.item{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--garis);border-radius:12px;background:#fff;margin-bottom:8px;width:100%;text-align:left}
+.item b{flex:1}
+.lencana{font-size:12px;padding:3px 9px;border-radius:99px;background:#eceff0;color:var(--abu);white-space:nowrap}
+.lencana.ok{background:var(--hijau-muda);color:var(--hijau-tua)}
+.lencana.awas{background:var(--kuning);color:#7a5600}
+.lencana.merah{background:#fde7e5;color:var(--merah)}
+.progres{height:6px;background:#e3e9e5;border-radius:9px;overflow:hidden;margin-top:6px}
+.progres i{display:block;height:100%;background:var(--hijau)}
+.video{position:relative;width:100%;max-width:340px;margin:0 auto;aspect-ratio:9/16;background:#000;border-radius:12px;overflow:hidden}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.aspek{padding:12px 0;border-top:1px solid var(--garis)}
+.aspek:first-of-type{border-top:0}
+.aspek .judul{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.aspek .judul b{flex:1}
+.aspek input{width:76px;text-align:center;font-weight:700;font-size:18px;padding:6px}
+.skala{display:grid;grid-template-columns:repeat(9,1fr);gap:4px}
+.skala button{padding:10px 0;border:1px solid var(--garis);background:#fff;border-radius:8px;font-size:14px;color:var(--teks)}
+.skala button.pilih{background:var(--hijau);color:#fff;border-color:var(--hijau);font-weight:700}
+.cek{display:flex;gap:10px;align-items:flex-start;padding:7px 0}
+.cek input{width:20px;height:20px;flex:none;margin-top:2px}
+details{border:1px solid var(--garis);border-radius:10px;padding:10px 12px;background:#fff;margin:10px 0}
+summary{font-weight:600;cursor:pointer}
+.puisi{white-space:pre-wrap;margin-top:8px;font-size:15px}
+.tab{display:flex;gap:6px;margin-bottom:12px}
+.tab button{flex:1;padding:10px 6px;border:1px solid var(--garis);background:#fff;border-radius:10px;font-size:14px}
+.tab button.aktif{background:var(--hijau);color:#fff;border-color:var(--hijau);font-weight:600}
+.gulir{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--garis);padding:7px 6px;text-align:left;vertical-align:top}
+th{background:var(--hijau-muda);white-space:nowrap}
+td.n,th.n{text-align:right;white-space:nowrap}
+td input{min-width:84px;padding:7px}
+#pesan{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1d2a23;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;max-width:90%;display:none;z-index:9}
+#pesan.galat{background:var(--merah)}
+.tengah{text-align:center}
+.jarak{margin-top:10px}
+@media print{header,.tab,.btn,#pesan{display:none!important}body{background:#fff}.kartu{border:0;padding:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Penilaian Juri<small>Lomba Baca Puisi Gizi · HUT ke-70 PERSAGI Sulsel</small></h1>
+  <button id="btnKembali" hidden>‹ Kembali</button>
+  <button id="btnKeluar" hidden>Keluar</button>
+</header>
+<main id="app"></main>
+<div id="pesan"></div>
+
+<script>
+/* ====== GANTI dengan URL aplikasi web Apps Script (berakhiran /exec) ====== */
+const API_URL = 'TEMPEL_URL_APPS_SCRIPT_DI_SINI';
+
+const ASPEK = [
+  {k:'penghayatan', nama:'Penghayatan & Ekspresi', ket:'Menangkap jiwa dan suasana puisi'},
+  {k:'vokal', nama:'Vokal, Artikulasi & Intonasi', ket:'Kejelasan ucapan, tekanan, tempo'},
+  {k:'gestur', nama:'Gestur, Mimik & Penguasaan Kamera', ket:'Gerak tubuh, raut wajah, kontak mata ke kamera'},
+  {k:'kreativitas', nama:'Kreativitas Penyajian', ket:'Konsep, latar, kostum, properti'}
+];
+const PEL = [
+  {k:'durasi', nama:'Durasi lebih dari 5 menit'},
+  {k:'logo', nama:'Logo PERSAGI / HUT ke-70 tidak tampil'},
+  {k:'dubbing', nama:'Diduga dubbing atau suara AI'},
+  {k:'filter', nama:'Filter wajah berlebihan'},
+  {k:'kolase', nama:'Kolase, potongan video, atau lebih dari satu orang'}
+];
+const SKALA = [60,65,70,75,80,85,90,95,100];
+
+let pin = '', D = null, layar = {nama:'login'}, kotor = false;
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const f1 = n => Number(n).toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+const pelNama = k => (PEL.find(p => p.k === k) || {nama:k}).nama;
+
+function simpanSesi(v){ try{ v ? sessionStorage.setItem('pinJuri', v) : sessionStorage.removeItem('pinJuri'); }catch(e){} }
+function bacaSesi(){ try{ return sessionStorage.getItem('pinJuri') || ''; }catch(e){ return ''; } }
+
+let tPesan;
+function pesan(t, galat){
+  const el = $('#pesan'); el.textContent = t; el.className = galat ? 'galat' : ''; el.style.display = 'block';
+  clearTimeout(tPesan); tPesan = setTimeout(() => el.style.display = 'none', galat ? 5000 : 2200);
+}
+
+async function api(action, data){
+  if (API_URL.indexOf('http') !== 0) throw new Error('API_URL belum diisi di index.html.');
+  const r = await fetch(API_URL, {
+    method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(Object.assign({action, pin}, data || {}))
+  });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.pesan || 'Terjadi kesalahan.');
+  return j;
+}
+
+async function muat(){
+  D = await api('muat');
+  $('#btnKeluar').hidden = false;
+}
+
+function ke(l){
+  if (kotor && !confirm('Nilai di layar ini belum disimpan. Tinggalkan saja?')) return;
+  kotor = false; layar = l; gambar(); window.scrollTo(0,0);
+}
+
+function gambar(){
+  const b = $('#btnKembali');
+  b.hidden = !(layar.nama === 'daftar' || layar.nama === 'nilai');
+  if (layar.nama === 'login') return vLogin();
+  if (D.role === 'admin') return vAdmin();
+  if (layar.nama === 'daftar') return vDaftar();
+  if (layar.nama === 'nilai') return vNilai();
+  return vBeranda();
+}
+
+$('#btnKembali').onclick = () => {
+  if (layar.nama === 'nilai') ke({nama:'daftar', kat:layar.kat});
+  else ke({nama:'beranda'});
+};
+$('#btnKeluar').onclick = () => {
+  if (kotor && !confirm('Nilai di layar ini belum disimpan. Keluar saja?')) return;
+  kotor = false; pin = ''; D = null; simpanSesi(''); $('#btnKeluar').hidden = true; layar = {nama:'login'}; gambar();
+};
+window.addEventListener('beforeunload', e => { if (kotor){ e.preventDefault(); e.returnValue = ''; } });
+
+/* ================= LOGIN ================= */
+function vLogin(){
+  app.innerHTML = `<div class="kartu" style="max-width:380px;margin:40px auto">
+    <h2>Masuk</h2>
+    <p class="kecil">Masukkan PIN yang diberikan panitia.</p>
+    <form id="fLogin">
+      <input id="inPin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN" required>
+      <button class="btn blok jarak" id="btnMasuk">Masuk</button>
+    </form></div>`;
+  $('#fLogin').onsubmit = async e => {
+    e.preventDefault();
+    const btn = $('#btnMasuk'); btn.disabled = true; btn.textContent = 'Memeriksa…';
+    pin = $('#inPin').value.trim();
+    try { await muat(); simpanSesi(pin); layar = {nama:'beranda'}; gambar(); }
+    catch(err){ pin = ''; pesan(err.message, true); btn.disabled = false; btn.textContent = 'Masuk'; }
+  };
+}
+
+/* ================= JURI ================= */
+function vBeranda(){
+  app.innerHTML = `<div class="kartu"><h2>${esc(D.nama)}</h2>
+    <p class="kecil">Pilih kategori. Nilai tiap aspek 60–100. Setelah semua peserta dinilai, kunci nilai kategori itu.</p></div>` +
+    D.kategori.map((k, i) => {
+      const n = k.peserta.filter(p => p.nilai).length, t = k.peserta.length;
+      return `<button class="item" data-kat="${i}"><div style="flex:1"><b>${esc(k.kode)} · ${esc(k.nama)}</b>
+        <div class="progres"><i style="width:${t ? n / t * 100 : 0}%"></i></div></div>
+        <span class="lencana ${k.terkunci ? 'ok' : ''}">${k.terkunci ? 'Terkunci' : n + '/' + t}</span></button>`;
+    }).join('');
+  app.querySelectorAll('[data-kat]').forEach(b => b.onclick = () => ke({nama:'daftar', kat:+b.dataset.kat}));
+}
+
+function vDaftar(){
+  const k = D.kategori[layar.kat];
+  const n = k.peserta.filter(p => p.nilai).length, t = k.peserta.length;
+  app.innerHTML = `<div class="kartu"><h2>${esc(k.kode)} · ${esc(k.nama)}</h2>
+    <p class="kecil">${n} dari ${t} peserta sudah dinilai${k.terkunci ? ' · nilai sudah dikunci' : ''}.</p></div>` +
+    k.peserta.map((p, i) => `<button class="item" data-i="${i}"><b>${esc(p.nomor)}</b>
+      ${p.nilai && p.nilai.pelanggaran.length ? '<span class="lencana awas">Ada catatan pelanggaran</span>' : ''}
+      <span class="lencana ${p.nilai ? 'ok' : ''}">${p.nilai ? 'Sudah dinilai' : 'Belum'}</span></button>`).join('') +
+    (k.terkunci ? '' : `<button class="btn blok jarak" id="btnKunci" ${n < t || !t ? 'disabled' : ''}>Kunci Nilai Kategori ${esc(k.kode)}</button>
+      <p class="kecil tengah">Setelah dikunci, nilai tidak bisa diubah kecuali dibuka kembali oleh panitia.</p>`);
+  app.querySelectorAll('[data-i]').forEach(b => b.onclick = () => ke({nama:'nilai', kat:layar.kat, i:+b.dataset.i}));
+  const bk = $('#btnKunci');
+  if (bk) bk.onclick = async () => {
+    if (!confirm('Kunci nilai kategori ' + k.kode + '? Nilai tidak bisa diubah lagi.')) return;
+    bk.disabled = true;
+    try { await api('kunci', {kategori:k.kode}); k.terkunci = true; pesan('Nilai dikunci.'); gambar(); }
+    catch(err){ pesan(err.message, true); bk.disabled = false; }
+  };
+}
+
+function vNilai(){
+  const k = D.kategori[layar.kat], p = k.peserta[layar.i], v = p.nilai || {}, kunci = k.terkunci;
+  const pu = k.puisi || {};
+  const video = p.idVideo
+    ? `<div class="video"><iframe src="https://www.tiktok.com/player/v1/${encodeURIComponent(p.idVideo)}?controls=1&rel=0&description=0&music_info=0" allow="fullscreen; encrypted-media" allowfullscreen title="Video peserta"></iframe></div>`
+    : `<p class="kecil tengah">Video tidak bisa ditampilkan di sini.</p>`;
+  app.innerHTML = `<div class="kartu">
+      <div class="baris"><h2 style="flex:1;margin:0">${esc(p.nomor)}</h2><span class="lencana">${layar.i + 1} dari ${k.peserta.length}</span></div>
+      <p class="kecil" style="margin:2px 0 10px">Kategori ${esc(k.kode)} · ${esc(k.nama)}</p>
+      ${video}
+      ${p.link ? `<p class="tengah jarak"><a class="btn sekunder" href="${esc(p.link)}" target="_blank" rel="noopener">Buka di TikTok</a></p>` : ''}
+      <details><summary>Puisi wajib: ${esc(pu.judul || '-')}</summary>
+        ${pu.teks ? `<div class="puisi">${esc(pu.teks)}</div>` : `<p class="kecil">Teks belum diisi panitia.</p>`}
+        ${D.linkPuisi ? `<p><a href="${esc(D.linkPuisi)}" target="_blank" rel="noopener">Lihat di halaman lomba</a></p>` : ''}
+      </details>
+    </div>
+    <div class="kartu">
+      <p class="kecil" style="margin-top:0">60–69 kurang · 70–79 cukup · 80–89 baik · 90–100 sangat baik</p>
+      ${ASPEK.map(a => `<div class="aspek" data-aspek="${a.k}">
+        <div class="judul"><b>${a.nama} <span class="kecil">(${D.bobot[a.k]}%)</span><br><span class="kecil" style="font-weight:400">${a.ket}</span></b>
+          <input type="number" min="60" max="100" step="1" inputmode="numeric" value="${v[a.k] ?? ''}" ${kunci ? 'disabled' : ''} aria-label="Nilai ${a.nama}"></div>
+        <div class="skala">${SKALA.map(s => `<button type="button" data-s="${s}" class="${v[a.k] === s ? 'pilih' : ''}" ${kunci ? 'disabled' : ''}>${s}</button>`).join('')}</div>
+      </div>`).join('')}
+    </div>
+    <div class="kartu">
+      <h3>Centang bila ada pelanggaran</h3>
+      ${PEL.map(x => `<label class="cek"><input type="checkbox" value="${x.k}" ${(v.pelanggaran || []).includes(x.k) ? 'checked' : ''} ${kunci ? 'disabled' : ''}><span>${x.nama}</span></label>`).join('')}
+      <details><summary>Tanda-tanda dubbing / suara AI</summary>
+        <ul class="kecil"><li>Gerak bibir tidak sinkron dengan suara</li><li>Suara terlalu rata, tanpa tarikan napas</li>
+        <li>Gema suara tidak cocok dengan ruangan di video</li><li>Ada potongan atau sambungan di tengah video</li></ul>
+        <p class="kecil">Centang hanya menandai. Keputusan tetap pada rapat juri dan panitia.</p></details>
+      <label class="kecil" for="cat">Catatan juri (opsional)</label>
+      <textarea id="cat" maxlength="1000" ${kunci ? 'disabled' : ''}>${esc(v.catatan || '')}</textarea>
+    </div>
+    ${kunci ? `<p class="kecil tengah">Nilai kategori ini sudah dikunci.</p>` : `<button class="btn blok" id="btnSimpan">Simpan & Lanjut</button>`}
+    <div class="baris jarak">
+      <button class="btn sekunder" id="btnSeb" ${layar.i === 0 ? 'disabled' : ''}>‹ Sebelumnya</button>
+      <button class="btn sekunder" id="btnBer" ${layar.i >= k.peserta.length - 1 ? 'disabled' : ''}>Berikutnya ›</button>
+    </div>`;
+
+  app.querySelectorAll('.aspek').forEach(el => {
+    const inp = el.querySelector('input'), tombol = el.querySelectorAll('.skala button');
+    const tandai = () => tombol.forEach(b => b.classList.toggle('pilih', +b.dataset.s === +inp.value));
+    tombol.forEach(b => b.onclick = () => { inp.value = b.dataset.s; tandai(); kotor = true; });
+    inp.oninput = () => { tandai(); kotor = true; };
+  });
+  app.querySelectorAll('.cek input, #cat').forEach(el => el.addEventListener('input', () => kotor = true));
+  $('#btnSeb').onclick = () => ke({nama:'nilai', kat:layar.kat, i:layar.i - 1});
+  $('#btnBer').onclick = () => ke({nama:'nilai', kat:layar.kat, i:layar.i + 1});
+
+  const bs = $('#btnSimpan');
+  if (bs) bs.onclick = async () => {
+    const data = {nomor:p.nomor, pelanggaran:[], catatan:$('#cat').value.trim()};
+    for (const a of ASPEK){
+      const n = Number(app.querySelector(`[data-aspek="${a.k}"] input`).value);
+      if (!Number.isInteger(n) || n < 60 || n > 100){ pesan('Isi nilai ' + a.nama + ' dengan angka bulat 60–100.', true); return; }
+      data[a.k] = n;
+    }
+    app.querySelectorAll('.cek input:checked').forEach(c => data.pelanggaran.push(c.value));
+    bs.disabled = true; bs.textContent = 'Menyimpan…';
+    try {
+      await api('simpanNilai', data);
+      p.nilai = {penghayatan:data.penghayatan, vokal:data.vokal, gestur:data.gestur, kreativitas:data.kreativitas, pelanggaran:data.pelanggaran, catatan:data.catatan};
+      kotor = false; pesan('Nilai ' + p.nomor + ' tersimpan.');
+      let lanjut = k.peserta.findIndex((x, i) => i > layar.i && !x.nilai);
+      if (lanjut < 0) lanjut = k.peserta.findIndex(x => !x.nilai);
+      if (lanjut >= 0) ke({nama:'nilai', kat:layar.kat, i:lanjut});
+      else ke({nama:'daftar', kat:layar.kat});
+    } catch(err){ pesan(err.message, true); bs.disabled = false; bs.textContent = 'Simpan & Lanjut'; }
+  };
+}
+
+/* ================= PANITIA ================= */
+let tabAdmin = 'eng', katAdmin = 0;
+function vAdmin(){
+  app.innerHTML = `<div class="tab">
+      <button data-t="eng" class="${tabAdmin === 'eng' ? 'aktif' : ''}">Engagement</button>
+      <button data-t="mon" class="${tabAdmin === 'mon' ? 'aktif' : ''}">Monitor</button>
+      <button data-t="rek" class="${tabAdmin === 'rek' ? 'aktif' : ''}">Rekap</button></div>
+    <div id="isi"></div>`;
+  app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => {
+    if (kotor && !confirm('Angka engagement belum disimpan. Pindah tab saja?')) return;
+    kotor = false; tabAdmin = b.dataset.t; vAdmin();
+  });
+  ({eng:aEng, mon:aMon, rek:aRek})[tabAdmin]();
+}
+
+function pilihKat(){
+  return `<select id="selKat">${D.kategori.map((k, i) => `<option value="${i}" ${i === katAdmin ? 'selected' : ''}>${esc(k.kode)} · ${esc(k.nama)} (${k.peserta.length})</option>`).join('')}</select>`;
+}
+function pasangPilihKat(){
+  $('#selKat').onchange = e => {
+    if (kotor && !confirm('Angka engagement belum disimpan. Ganti kategori saja?')){ e.target.value = katAdmin; return; }
+    kotor = false; katAdmin = +e.target.value; vAdmin();
+  };
+}
+
+function aEng(){
+  const k = D.kategori[katAdmin];
+  $('#isi').innerHTML = `<div class="kartu"><h2>Data engagement</h2>
+    <p class="kecil">Catat keempat angka semua video pada waktu yang sama. Followers tidak dihitung.</p>
+    ${pilihKat()}
+    <div class="gulir jarak"><table><thead><tr><th>Peserta</th><th>Views</th><th>Likes</th><th>Komentar</th><th>Share</th></tr></thead><tbody>
+    ${k.peserta.map(p => `<tr data-n="${esc(p.nomor)}"><td><b>${esc(p.nomor)}</b><br>${esc(p.nama)}<br>
+      ${p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">Buka video</a>` : ''}</td>
+      ${['views','likes','komentar','share'].map(m => `<td><input type="number" min="0" step="1" inputmode="numeric" data-m="${m}" value="${p.eng ? p.eng[m] : ''}"></td>`).join('')}</tr>`).join('')}
+    </tbody></table></div>
+    <button class="btn blok jarak" id="btnEng">Simpan Engagement Kategori ${esc(k.kode)}</button></div>`;
+  pasangPilihKat();
+  $('#isi').querySelectorAll('td input').forEach(i => i.oninput = () => kotor = true);
+  $('#btnEng').onclick = async () => {
+    const rows = [];
+    for (const tr of $('#isi').querySelectorAll('tr[data-n]')){
+      const r = {nomor:tr.dataset.n}; let kosong = 0;
+      tr.querySelectorAll('input').forEach(i => { if (i.value === '') kosong++; r[i.dataset.m] = Number(i.value); });
+      if (kosong === 4) continue;
+      if (kosong > 0 || ['views','likes','komentar','share'].some(m => !Number.isInteger(r[m]) || r[m] < 0)){
+        pesan('Lengkapi 4 angka untuk ' + r.nomor + ' (bilangan bulat, minimal 0).', true); return;
+      }
+      rows.push(r);
+    }
+    if (!rows.length){ pesan('Belum ada angka yang diisi.', true); return; }
+    const b = $('#btnEng'); b.disabled = true; b.textContent = 'Menyimpan…';
+    try { await api('simpanEngagement', {rows}); kotor = false; await muat(); pesan('Engagement tersimpan.'); vAdmin(); }
+    catch(err){ pesan(err.message, true); b.disabled = false; b.textContent = 'Simpan Engagement Kategori ' + k.kode; }
+  };
+}
+
+function aMon(){
+  $('#isi').innerHTML = `<div class="kartu"><h2>Progres juri</h2>
+    <div class="gulir"><table><thead><tr><th>Kategori</th>${D.juri.map(j => `<th>${esc(j.nama)}</th>`).join('')}<th>Engagement</th></tr></thead><tbody>
+    ${D.kategori.map(k => `<tr><td><b>${esc(k.kode)}</b> · ${esc(k.nama)}</td>
+      ${D.juri.map(j => `<td>${k.progres[j.id]}/${k.peserta.length}
+        ${k.terkunci[j.id] ? `<span class="lencana ok">Terkunci</span><br><button class="btn bahaya" style="padding:5px 8px;font-size:12px;margin-top:4px" data-buka="${j.id}|${k.kode}">Buka kunci</button>` : ''}</td>`).join('')}
+      <td><span class="lencana ${k.engLengkap ? 'ok' : 'awas'}">${k.engLengkap ? 'Lengkap' : 'Belum lengkap'}</span></td></tr>`).join('')}
+    </tbody></table></div>
+    <button class="btn sekunder blok jarak" id="btnSegar">Muat ulang</button></div>`;
+  $('#btnSegar').onclick = async () => { try { await muat(); pesan('Data diperbarui.'); vAdmin(); } catch(err){ pesan(err.message, true); } };
+  $('#isi').querySelectorAll('[data-buka]').forEach(b => b.onclick = async () => {
+    const [juri, kategori] = b.dataset.buka.split('|');
+    if (!confirm('Buka kunci nilai ' + juri + ' untuk kategori ' + kategori + '? Juri bisa mengubah nilainya lagi.')) return;
+    try { await api('bukaKunci', {juri, kategori}); await muat(); pesan('Kunci dibuka.'); vAdmin(); } catch(err){ pesan(err.message, true); }
+  });
+}
+
+function aRek(){
+  const k = D.kategori[katAdmin];
+  let isi;
+  if (!k.rekap){
+    const belum = D.juri.filter(j => !k.terkunci[j.id]).map(j => j.nama);
+    isi = `<p>Rekap kategori ini belum bisa ditampilkan.</p><ul>
+      ${belum.length ? `<li>Belum mengunci nilai: ${esc(belum.join(', '))}</li>` : ''}
+      ${k.engLengkap ? '' : '<li>Data engagement belum lengkap</li>'}
+      ${k.peserta.length ? '' : '<li>Tidak ada peserta</li>'}</ul>`;
+  } else {
+    isi = `<div class="gulir"><table><thead><tr><th class="n">#</th><th>Peserta</th><th class="n">Penghayatan</th><th class="n">Vokal</th><th class="n">Gestur</th><th class="n">Kreativitas</th><th class="n">Engagement</th><th class="n">Nilai akhir</th></tr></thead><tbody>
+      ${k.rekap.map(r => `<tr><td class="n"><b>${r.peringkat}</b></td>
+        <td><b>${esc(r.nama)}</b><br><span class="kecil">${esc(r.nomor)} · ${esc(r.instansi)}</span>
+          ${r.selisih ? '<br><span class="lencana awas">Selisih antarjuri &gt; 15</span>' : ''}
+          ${r.verifikasi.length ? `<br><span class="lencana merah">Perlu verifikasi: ${esc(r.verifikasi.map(pelNama).join('; '))}</span>` : ''}
+          <details><summary class="kecil">Rincian per juri</summary>
+            ${D.juri.map(j => { const x = r.perJuri[j.id]; return `<p class="kecil"><b>${esc(j.nama)}</b>: ${x.penghayatan} / ${x.vokal} / ${x.gestur} / ${x.kreativitas}
+              ${x.pelanggaran.length ? '<br>Pelanggaran: ' + esc(x.pelanggaran.map(pelNama).join('; ')) : ''}${x.catatan ? '<br>Catatan: ' + esc(x.catatan) : ''}</p>`; }).join('')}
+          </details></td>
+        <td class="n">${f1(r.rata.penghayatan)}</td><td class="n">${f1(r.rata.vokal)}</td><td class="n">${f1(r.rata.gestur)}</td>
+        <td class="n">${f1(r.rata.kreativitas)}</td><td class="n">${f1(r.engagement)}</td><td class="n"><b>${f1(r.akhir)}</b></td></tr>`).join('')}
+      </tbody></table></div>
+      <p class="kecil">Nilai akhir = Penghayatan ${D.bobot.penghayatan}% + Vokal ${D.bobot.vokal}% + Gestur ${D.bobot.gestur}% + Kreativitas ${D.bobot.kreativitas}% + Engagement ${D.bobot.engagement}%. Bila seri, Penghayatan lalu Vokal yang lebih tinggi menang.</p>`;
+  }
+  $('#isi').innerHTML = `<div class="kartu"><h2>Rekap nilai</h2>${pilihKat()}<div class="jarak">${isi}</div>
+    <div class="baris jarak"><button class="btn sekunder" id="btnCsv">Unduh CSV (semua kategori)</button><button class="btn sekunder" id="btnCetak">Cetak</button></div></div>`;
+  pasangPilihKat();
+  $('#btnCetak').onclick = () => window.print();
+  $('#btnCsv').onclick = unduhCsv;
+}
+
+function unduhCsv(){
+  const siap = D.kategori.filter(k => k.rekap);
+  if (!siap.length){ pesan('Belum ada kategori yang rekapnya siap.', true); return; }
+  const q = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
+  const a = n => Number(n).toFixed(2).replace('.', ',');
+  const kepala = ['Kategori','Peringkat','Nomor','Nama','Instansi','Penghayatan','Vokal','Gestur','Kreativitas','Engagement','Nilai Akhir','Selisih >15','Perlu Verifikasi'];
+  D.juri.forEach(j => ['Penghayatan','Vokal','Gestur','Kreativitas'].forEach(x => kepala.push(j.nama + ' - ' + x)));
+  const baris = [kepala.map(q).join(';')];
+  siap.forEach(k => k.rekap.forEach(r => {
+    const c = [q(k.kode + ' - ' + k.nama), r.peringkat, q(r.nomor), q(r.nama), q(r.instansi), a(r.rata.penghayatan), a(r.rata.vokal), a(r.rata.gestur), a(r.rata.kreativitas), a(r.engagement), a(r.akhir), r.selisih ? 'Ya' : '', q(r.verifikasi.map(pelNama).join('; '))];
+    D.juri.forEach(j => { const x = r.perJuri[j.id]; c.push(x.penghayatan, x.vokal, x.gestur, x.kreativitas); });
+    baris.push(c.join(';'));
+  }));
+  const blob = new Blob(['﻿' + baris.join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const el = document.createElement('a');
+  el.href = URL.createObjectURL(blob); el.download = 'rekap-lomba-baca-puisi-gizi.csv';
+  document.body.appendChild(el); el.click(); el.remove();
+  setTimeout(() => URL.revokeObjectURL(el.href), 2000);
+}
+
+/* ================= MULAI ================= */
+(async () => {
+  pin = bacaSesi();
+  if (pin){
+    app.innerHTML = '<p class="tengah kecil" style="margin-top:40px">Memuat…</p>';
+    try { await muat(); layar = {nama:'beranda'}; } catch(e){ pin = ''; simpanSesi(''); layar = {nama:'login'}; }
+  }
+  gambar();
+})();
+</script>
+</body>
+</html>
