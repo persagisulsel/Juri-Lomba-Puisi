@@ -217,15 +217,15 @@ function vDaftar(){
 function vNilai(){
   const k = D.kategori[layar.kat], p = k.peserta[layar.i], v = p.nilai || {}, kunci = k.terkunci;
   const pu = k.puisi || {};
-  const video = p.idVideo
-    ? `<div class="video"><iframe id="vid" src="${urlPemutar(p.idVideo)}" referrerpolicy="strict-origin-when-cross-origin" allow="fullscreen; encrypted-media; autoplay" allowfullscreen title="Video peserta"></iframe></div>
-       <p class="tengah kecil" style="margin:8px 0 0"><button type="button" id="btnPemutar" style="background:none;border:0;color:var(--biru);text-decoration:underline;padding:4px">Video tidak muncul? Coba pemutar lain</button></p>`
-    : `<p class="kecil tengah">Video tidak bisa ditampilkan di sini.</p>`;
+  const video = `<div class="tengah" style="padding:6px 0">
+      ${p.link ? `<a class="btn" id="btnTonton" href="${esc(p.link)}" target="_blank" rel="noopener" style="font-size:17px;padding:14px 22px">&#9654; Tonton Video di TikTok</a>
+      <p class="kecil" style="margin:8px 0 0">Video terbuka di jendela atau aplikasi TikTok. Setelah menonton, kembali ke halaman ini untuk mengisi nilai.</p>` : `<p class="kecil">Link video tidak tersedia.</p>`}
+      ${p.idVideo ? `<p class="kecil" style="margin:6px 0 0"><button type="button" id="btnPemutar" style="background:none;border:0;color:var(--biru);text-decoration:underline;padding:4px">Coba putar di halaman ini</button></p><div id="kotakVideo"></div>` : ''}
+    </div>`;
   app.innerHTML = `<div class="kartu">
       <div class="baris"><h2 style="flex:1;margin:0">${esc(p.nomor)}</h2><span class="lencana">${layar.i + 1} dari ${k.peserta.length}</span></div>
       <p class="kecil" style="margin:2px 0 10px">Kategori ${esc(k.kode)} · ${esc(k.nama)}</p>
       ${video}
-      ${p.link ? `<p class="tengah jarak"><a class="btn sekunder" href="${esc(p.link)}" target="_blank" rel="noopener">Buka di TikTok</a></p>` : ''}
       <details><summary>Puisi wajib: ${esc(pu.judul || '-')}</summary>
         ${pu.teks ? `<div class="puisi">${esc(pu.teks)}</div>` : `<p class="kecil">Teks belum diisi panitia.</p>`}
         ${D.linkPuisi ? `<p><a href="${esc(D.linkPuisi)}" target="_blank" rel="noopener">Lihat di halaman lomba</a></p>` : ''}
@@ -262,8 +262,20 @@ function vNilai(){
     inp.oninput = () => { tandai(); kotor = true; };
   });
   app.querySelectorAll('.cek input, #cat').forEach(el => el.addEventListener('input', () => kotor = true));
+  const bt = $('#btnTonton');
+  if (bt) bt.onclick = e => {
+    if (window.innerWidth < 900) return;            // HP: biarkan terbuka di tab/aplikasi TikTok
+    e.preventDefault();                             // komputer: jendela kecil di samping, dipakai ulang
+    const kiri = Math.max(0, (window.screenX || 0) + window.outerWidth - 460);
+    const w = window.open(p.link, 'videoPeserta', 'width=440,height=860,top=40,left=' + kiri);
+    if (w) { try { w.opener = null; } catch (err) {} w.focus(); } else window.open(p.link, '_blank', 'noopener');
+  };
   const bp = $('#btnPemutar');
-  if (bp) bp.onclick = () => { pemutar = pemutar ? 0 : 1; $('#vid').src = urlPemutar(p.idVideo); };
+  if (bp) bp.onclick = () => {
+    pemutar = $('#kotakVideo').firstChild ? (pemutar ? 0 : 1) : pemutar;
+    $('#kotakVideo').innerHTML = `<div class="video jarak"><iframe src="${urlPemutar(p.idVideo)}" referrerpolicy="strict-origin-when-cross-origin" allow="fullscreen; encrypted-media; autoplay" allowfullscreen title="Video peserta"></iframe></div>`;
+    bp.textContent = 'Tidak muncul? Coba pemutar lain';
+  };
   $('#btnSeb').onclick = () => ke({nama:'nilai', kat:layar.kat, i:layar.i - 1});
   $('#btnBer').onclick = () => ke({nama:'nilai', kat:layar.kat, i:layar.i + 1});
 
