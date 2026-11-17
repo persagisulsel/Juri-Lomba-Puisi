@@ -329,11 +329,12 @@ function pasangPilihKat(){
 function aEng(){
   const k = D.kategori[katAdmin];
   $('#isi').innerHTML = `<div class="kartu"><h2>Data engagement</h2>
-    <p class="kecil">Catat keempat angka semua video pada waktu yang sama. Followers tidak dihitung.</p>
+    <p class="kecil">Catat keempat angka semua video pada waktu yang sama. Followers tidak dihitung. Waktu pencatatan terekam otomatis saat disimpan, dan hanya berubah bila angkanya diubah.</p>
     ${pilihKat()}
     <div class="gulir jarak"><table><thead><tr><th>Peserta</th><th>Views</th><th>Likes</th><th>Komentar</th><th>Share</th></tr></thead><tbody>
     ${k.peserta.map(p => `<tr data-n="${esc(p.nomor)}"><td><b>${esc(p.nomor)}</b><br>${esc(p.nama)}<br>
-      ${p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">Buka video</a>` : ''}</td>
+      ${p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">Buka video</a>` : ''}
+      <br><span class="kecil">${p.eng && p.eng.waktu ? 'Dicatat: ' + esc(p.eng.waktu) : 'Belum dicatat'}</span></td>
       ${['views','likes','komentar','share'].map(m => `<td><input type="number" min="0" step="1" inputmode="numeric" data-m="${m}" value="${p.eng ? p.eng[m] : ''}"></td>`).join('')}</tr>`).join('')}
     </tbody></table></div>
     <button class="btn blok jarak" id="btnEng">Simpan Engagement Kategori ${esc(k.kode)}</button></div>`;
@@ -384,12 +385,14 @@ function aRek(){
       ${k.engLengkap ? '' : '<li>Data engagement belum lengkap</li>'}
       ${k.peserta.length ? '' : '<li>Tidak ada peserta</li>'}</ul>`;
   } else {
-    isi = `<div class="gulir"><table><thead><tr><th class="n">#</th><th>Peserta</th><th class="n">Penghayatan</th><th class="n">Vokal</th><th class="n">Gestur</th><th class="n">Kreativitas</th><th class="n">Engagement</th><th class="n">Nilai akhir</th></tr></thead><tbody>
+    isi = `<p class="kecil"><b>Engagement dicatat:</b> ${esc(rentangWaktu(k))}</p>
+      <div class="gulir"><table><thead><tr><th class="n">#</th><th>Peserta</th><th class="n">Penghayatan</th><th class="n">Vokal</th><th class="n">Gestur</th><th class="n">Kreativitas</th><th class="n">Engagement</th><th class="n">Nilai akhir</th></tr></thead><tbody>
       ${k.rekap.map(r => `<tr><td class="n"><b>${r.peringkat}</b></td>
         <td><b>${esc(r.nama)}</b><br><span class="kecil">${esc(r.nomor)} · ${esc(r.instansi)}</span>
           ${r.selisih ? '<br><span class="lencana awas">Selisih antarjuri &gt; 15</span>' : ''}
           ${r.verifikasi.length ? `<br><span class="lencana merah">Perlu verifikasi: ${esc(r.verifikasi.map(pelNama).join('; '))}</span>` : ''}
-          <details><summary class="kecil">Rincian per juri</summary>
+          <details><summary class="kecil">Rincian per juri & engagement</summary>
+            ${(e => e ? `<p class="kecil"><b>Engagement</b>: ${e.views} views · ${e.likes} likes · ${e.komentar} komentar · ${e.share} share<br>Dicatat: ${esc(e.waktu || '-')}</p>` : '')(engPeserta(k, r.nomor))}
             ${D.juri.map(j => { const x = r.perJuri[j.id]; return `<p class="kecil"><b>${esc(j.nama)}</b>: ${x.penghayatan} / ${x.vokal} / ${x.gestur} / ${x.kreativitas}
               ${x.pelanggaran.length ? '<br>Pelanggaran: ' + esc(x.pelanggaran.map(pelNama).join('; ')) : ''}${x.catatan ? '<br>Catatan: ' + esc(x.catatan) : ''}</p>`; }).join('')}
           </details></td>
@@ -405,16 +408,26 @@ function aRek(){
   $('#btnCsv').onclick = unduhCsv;
 }
 
+function engPeserta(k, nomor){ const p = k.peserta.find(x => x.nomor === nomor); return p ? p.eng : null; }
+function rentangWaktu(k){
+  const e = k.peserta.map(p => p.eng).filter(x => x && x.ts).sort((a, b) => a.ts - b.ts);
+  if (!e.length) return '-';
+  const awal = e[0].waktu, akhir = e[e.length - 1].waktu;
+  return awal === akhir ? awal : awal + ' s.d. ' + akhir;
+}
+
 function unduhCsv(){
   const siap = D.kategori.filter(k => k.rekap);
   if (!siap.length){ pesan('Belum ada kategori yang rekapnya siap.', true); return; }
   const q = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
   const a = n => Number(n).toFixed(2).replace('.', ',');
-  const kepala = ['Kategori','Peringkat','Nomor','Nama','Instansi','Penghayatan','Vokal','Gestur','Kreativitas','Engagement','Nilai Akhir','Selisih >15','Perlu Verifikasi'];
+  const kepala = ['Kategori','Peringkat','Nomor','Nama','Instansi','Penghayatan','Vokal','Gestur','Kreativitas','Engagement','Nilai Akhir','Selisih >15','Perlu Verifikasi','Views','Likes','Komentar','Share','Waktu Catat Engagement'];
   D.juri.forEach(j => ['Penghayatan','Vokal','Gestur','Kreativitas'].forEach(x => kepala.push(j.nama + ' - ' + x)));
   const baris = [kepala.map(q).join(';')];
   siap.forEach(k => k.rekap.forEach(r => {
     const c = [q(k.kode + ' - ' + k.nama), r.peringkat, q(r.nomor), q(r.nama), q(r.instansi), a(r.rata.penghayatan), a(r.rata.vokal), a(r.rata.gestur), a(r.rata.kreativitas), a(r.engagement), a(r.akhir), r.selisih ? 'Ya' : '', q(r.verifikasi.map(pelNama).join('; '))];
+    const e = engPeserta(k, r.nomor) || {};
+    c.push(e.views ?? '', e.likes ?? '', e.komentar ?? '', e.share ?? '', q(e.waktu || ''));
     D.juri.forEach(j => { const x = r.perJuri[j.id]; c.push(x.penghayatan, x.vokal, x.gestur, x.kreativitas); });
     baris.push(c.join(';'));
   }));
